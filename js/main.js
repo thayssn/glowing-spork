@@ -8,7 +8,8 @@
       acceleration : 1,
       max_vel: 50,
       jump_force: 20,
-      gravity: 1.5
+      gravity: 2,
+      friction: .95
     }
   };
 
@@ -47,14 +48,10 @@
 
     if(player.forward && player.vel_x < game.config.max_vel){
       player.vel_x += game.config.acceleration;
-    }else if(player.vel_x > 0){
-      player.vel_x += game.config.acceleration/2 * -1;
     }
 
     if(player.backward && player.vel_x > -game.config.max_vel){
       player.vel_x += game.config.acceleration * -1;
-    }else if(player.vel_x < 0){
-      player.vel_x += game.config.acceleration / 2;
     }
 
     if(player.jumping && !player.onAir){
@@ -63,8 +60,11 @@
     }
 
     player.x += player.vel_x;
+    player.vel_x *= game.config.friction;
+
     player.vel_y += game.config.gravity;
     player.y += player.vel_y;
+    player.vel_y *= game.config.friction;
 
     if(player.y >= 200){
       player.vel_y = 0;

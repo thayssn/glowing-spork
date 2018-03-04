@@ -2,6 +2,7 @@
   const context = canvas.getContext('2d');
   const W =  canvas.width = window.innerWidth;
   const H =  canvas.height = window.innerHeight;
+  let pressDelay = false
 
   const game = {
     config: {
@@ -13,7 +14,7 @@
     }
   };
 
-  const player = {
+  let player = {
     forward: false,
     backward: false,
     jumping: false,
@@ -57,6 +58,7 @@
     if(player.jumping && !player.onAir){
       player.vel_y -= game.config.jump_force;
       player.onAir = true;
+      player.jumping = false;
     }
 
     player.x += player.vel_x;
@@ -97,8 +99,12 @@
     }
 
     if(e.keyCode == 38) {
-      if (!player.onAir) {
+      if (!player.onAir && !pressDelay) {
         player.jumping = true;
+        pressDelay = true;
+        setTimeout(function(){
+          pressDelay = false;
+        }, 400)
       }
     }
 

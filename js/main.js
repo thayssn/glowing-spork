@@ -92,23 +92,32 @@
   };
 
   window.addEventListener('keydown', function(e){
-    switch(e.keyCode ){
-      case 37:
-        player.backward = true;
-        break;
-      case 38:
-        if(!player.onAir){
-          player.jumping = true;
-        }
-        break;
-      case 39:
+    if(e.keyCode == 37) {
+      player.backward = true;
+    }
+
+    if(e.keyCode == 38) {
+      if (!player.onAir) {
+        player.jumping = true;
+      }
+    }
+
+    if(e.keyCode == 39){
         player.forward = true;
     }
   });
   window.addEventListener('keyup', function(e){
-    player.forward = false;
-    player.backward = false;
-    player.jumping = false;
+    if(e.keyCode == 37) {
+      player.backward = false;
+    }
+
+    if(e.keyCode == 38) {
+      player.jumping = false;
+    }
+
+    if(e.keyCode == 39){
+      player.forward = false;
+    }
   });
 
   requestAnimationFrame(loop);

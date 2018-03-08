@@ -2,14 +2,14 @@
   const context = canvas.getContext('2d');
   const W =  canvas.width = window.innerWidth;
   const H =  canvas.height = window.innerHeight;
-  let pressDelay = false
+  let pressDelay = false;
 
   const game = {
     config: {
       acceleration : 1,
       max_vel: 50,
-      jump_force: 20,
-      gravity: 2,
+      jump_force: 30,
+      gravity: 1.2,
       friction: .95
     }
   };
@@ -28,6 +28,18 @@
     vel_x: 0,
     vel_y: 0,
     color: '#4AFF64'
+  };
+
+  let squared_ball = {
+    w: 40,
+    h: 40,
+    y: 200,
+    x: W/2,
+    off_x: function(){ return this.x + this.w},
+    off_y: function(){ return this.y + this.h},
+    vel_x: 0,
+    vel_y: 0,
+    color: '#ff6ca3'
   };
 
   const loop = function(){
@@ -55,6 +67,17 @@
       player.vel_x += game.config.acceleration * -1;
     }
 
+    if(player.off_x() >= squared_ball.x && player.x < squared_ball.x  || player.x <= squared_ball.off_x() && player.off_x() > squared_ball.off_x() ){
+      if(player.y <= squared_ball.y && player.off_y() >= squared_ball.off_y() ){
+        squared_ball.vel_x += player.vel_x;
+      }
+    }
+
+    if(squared_ball.off_x() >= W || squared_ball.x <= 0){
+      squared_ball.vel_x *= -1;
+    }
+
+
     if(player.jumping && !player.onAir){
       player.vel_y -= game.config.jump_force;
       player.onAir = true;
@@ -74,8 +97,13 @@
       player.onAir = false;
     }
 
+
+    squared_ball.x += squared_ball.vel_x;
+    squared_ball.vel_x *= game.config.friction;
+
     engine.clear();
     engine.draw(player);
+    engine.draw(squared_ball);
 
     requestAnimationFrame(loop);
   };
@@ -109,9 +137,11 @@
     }
 
     if(e.keyCode == 39){
-        player.forward = true;
+      player.forward = true;
     }
+
   });
+
   window.addEventListener('keyup', function(e){
     if(e.keyCode == 37) {
       player.backward = false;
@@ -124,6 +154,7 @@
     if(e.keyCode == 39){
       player.forward = false;
     }
+
   });
 
   requestAnimationFrame(loop);

@@ -10,7 +10,7 @@
       max_vel: 50,
       jump_force: 30,
       gravity: 1.2,
-      friction: .95
+      friction: .92
     }
   };
 
@@ -43,6 +43,7 @@
   };
 
   const loop = function(){
+
     if(player.x > W ){
       player.x = -player.w;
     }
@@ -67,26 +68,16 @@
       player.vel_x += game.config.acceleration * -1;
     }
 
-    if(player.off_x() >= squared_ball.x && player.x < squared_ball.x  || player.x <= squared_ball.off_x() && player.off_x() > squared_ball.off_x() ){
-      if(player.y <= squared_ball.y && player.off_y() >= squared_ball.off_y() ){
-        squared_ball.vel_x += player.vel_x;
-      }
-    }
-
-    if(squared_ball.off_x() >= W || squared_ball.x <= 0){
-      squared_ball.vel_x *= -1;
-    }
-
 
     if(player.jumping && !player.onAir){
       player.vel_y -= game.config.jump_force;
       player.onAir = true;
       player.jumping = false;
+
     }
-
     player.x += player.vel_x;
-    player.vel_x *= game.config.friction;
 
+    player.vel_x *= game.config.friction;
     player.vel_y += game.config.gravity;
     player.y += player.vel_y;
     player.vel_y *= game.config.friction;
@@ -97,6 +88,21 @@
       player.onAir = false;
     }
 
+    if(player.y <= squared_ball.y && player.off_y() >= squared_ball.off_y() ){
+      if((player.off_x() >= squared_ball.x && player.x < squared_ball.x) || (player.x <= squared_ball.off_x() && player.off_x() > squared_ball.off_x()) ){
+        squared_ball.vel_x += player.vel_x;
+      }
+    }
+
+    if(squared_ball.off_x() >= W || squared_ball.x <= 0){
+      squared_ball.vel_x *= -1;
+    }
+
+    if(squared_ball.off_x() >= player.x && squared_ball.x <= player.off_x() && player.onAir ){
+      if(player.off_y() >= squared_ball.y){
+        player.y = squared_ball.y - player.h;
+      }
+    }
 
     squared_ball.x += squared_ball.vel_x;
     squared_ball.vel_x *= game.config.friction;
